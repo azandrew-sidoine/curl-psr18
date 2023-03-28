@@ -16,11 +16,11 @@ use donatj\MockWebServer\MockWebServer;
 use donatj\MockWebServer\Response;
 use donatj\MockWebServer\Responses\NotFoundResponse;
 use Drewlabs\Curl\Mock\PostRequestResponse;
-use Drewlabs\Curl\Psr18Client;
 use Drewlabs\Psr7\Request;
 use Drewlabs\Psr7\Uri;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
+use Drewlabs\Psr18\Client;
 
 if (version_compare(\PHP_VERSION, '7.1.0') >= 0) {
     class ClientTest extends TestCase
@@ -53,13 +53,13 @@ if (version_compare(\PHP_VERSION, '7.1.0') >= 0) {
 
         public function test_psr18_client_create_new_instance()
         {
-            $client = Psr18Client::new();
+            $client = Client::new();
             $this->assertInstanceOf(ClientInterface::class, $client);
         }
 
         public function test_ps18_client_override_request()
         {
-            $client = Psr18Client::new(null, [
+            $client = Client::new(null, [
                 'base_url' => 'http://127.0.0.1:3000',
                 'request' => [
                     'headers' => [
@@ -100,7 +100,7 @@ if (version_compare(\PHP_VERSION, '7.1.0') >= 0) {
                 )
             );
             $requestURI = (new Uri($url));
-            $client = Psr18Client::new(($requestURI->getScheme() ?? 'http').'://'.rtrim($requestURI->getHost().(!empty($p = $requestURI->getPort()) ? ":$p" : ''), '/').'/api/transactions', [
+            $client = Client::new(($requestURI->getScheme() ?? 'http').'://'.rtrim($requestURI->getHost().(!empty($p = $requestURI->getPort()) ? ":$p" : ''), '/').'/api/transactions', [
                 'verify' => false,
                 'request' => [
                     'headers' => [
@@ -126,7 +126,7 @@ if (version_compare(\PHP_VERSION, '7.1.0') >= 0) {
                     ['content' => 'Testing implementation of Psr7 client!', 'likes' => 5],
                 ],
             ];
-            $client = Psr18Client::new(($requestURI->getScheme() ?? 'http').'://'.rtrim($requestURI->getHost().(!empty($p = $requestURI->getPort()) ? ":$p" : ''), '/').'/tests/post', [
+            $client = Client::new(($requestURI->getScheme() ?? 'http').'://'.rtrim($requestURI->getHost().(!empty($p = $requestURI->getPort()) ? ":$p" : ''), '/').'/tests/post', [
                 'verify' => false,
                 'request' => [
                     'headers' => [
@@ -151,7 +151,7 @@ if (version_compare(\PHP_VERSION, '7.1.0') >= 0) {
                     ['content' => 'Testing implementation of Psr7 client!', 'likes' => 5],
                 ],
             ];
-            $client = Psr18Client::new(($requestURI->getScheme() ?? 'http').'://'.rtrim($requestURI->getHost().(!empty($p = $requestURI->getPort()) ? ":$p" : ''), '/').'/tests/post', [
+            $client = Client::new(($requestURI->getScheme() ?? 'http').'://'.rtrim($requestURI->getHost().(!empty($p = $requestURI->getPort()) ? ":$p" : ''), '/').'/tests/post', [
                 'verify' => false,
                 'request' => [
                     'headers' => [
@@ -177,7 +177,7 @@ if (version_compare(\PHP_VERSION, '7.1.0') >= 0) {
                     ['content' => 'Testing implementation of Psr7 client!', 'likes' => 5],
                 ],
             ];
-            $client = Psr18Client::new(($requestURI->getScheme() ?? 'http').'://'.rtrim($requestURI->getHost().(!empty($p = $requestURI->getPort()) ? ":$p" : ''), '/').'/tests/post', [
+            $client = Client::new(($requestURI->getScheme() ?? 'http').'://'.rtrim($requestURI->getHost().(!empty($p = $requestURI->getPort()) ? ":$p" : ''), '/').'/tests/post', [
                 'verify' => false,
                 'request' => [
                     'headers' => [
@@ -195,7 +195,7 @@ if (version_compare(\PHP_VERSION, '7.1.0') >= 0) {
             $url = self::$server->setResponseOfPath('/test/post', new PostRequestResponse());
             $requestURI = (new Uri($url));
             $requests = require __DIR__.'/requests.php';
-            $client = Psr18Client::new(($requestURI->getScheme() ?? 'http').'://'.rtrim($requestURI->getHost().(!empty($p = $requestURI->getPort()) ? ":$p" : ''), '/').'/404', [
+            $client = Client::new(($requestURI->getScheme() ?? 'http').'://'.rtrim($requestURI->getHost().(!empty($p = $requestURI->getPort()) ? ":$p" : ''), '/').'/404', [
                 'verify' => false,
                 'request' => [
                     'headers' => [

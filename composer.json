@@ -23,6 +23,6 @@
     "require": {
         "psr/http-client": "^1.0",
         "drewlabs/psr7": "^0.1.3",
-        "drewlabs/curl-client": "^0.2.0"
+        "drewlabs/curl-client": "^0.3.0"
     }
 }
