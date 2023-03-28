@@ -2,3 +2,4 @@
 /.vscode
 index.php
 .php-cs-fixer.dist.php
+/.phpunit.cache/
