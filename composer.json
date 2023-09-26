@@ -3,7 +3,7 @@
     "description": "PSR18 compatible http client based on PHP curl client library",
     "type": "library",
     "require-dev": {
-        "phpunit/phpunit": "^10.0",
+        "phpunit/phpunit": ">=7.0",
         "donatj/mock-webserver": "^2.6"
     },
     "license": "MIT",
@@ -22,7 +22,6 @@
     "prefer-stable": true,
     "require": {
         "psr/http-client": "^1.0",
-        "drewlabs/psr7": "^0.1.3",
-        "drewlabs/curl-client": "^0.3.0"
+        "drewlabs/psr7": "^0.1.4"
     }
 }
