@@ -4,26 +4,26 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a171eb4303c38c4b916e240ab7e450e5",
+    "content-hash": "106b031bcd16f7b5e4059ba0451b8a62",
     "packages": [
         {
             "name": "drewlabs/psr7",
-            "version": "v0.1.4",
+            "version": "v0.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azandrew-sidoine/drewlabs-psr7.git",
-                "reference": "9c6c26b68f26679513b2cde91035b441c7904f3a"
+                "reference": "fd9d6d523e2a3c9f14ddee41bcdc700c54d4bbf2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azandrew-sidoine/drewlabs-psr7/zipball/9c6c26b68f26679513b2cde91035b441c7904f3a",
-                "reference": "9c6c26b68f26679513b2cde91035b441c7904f3a",
+                "url": "https://api.github.com/repos/azandrew-sidoine/drewlabs-psr7/zipball/fd9d6d523e2a3c9f14ddee41bcdc700c54d4bbf2",
+                "reference": "fd9d6d523e2a3c9f14ddee41bcdc700c54d4bbf2",
                 "shasum": ""
             },
             "require": {
                 "drewlabs/psr7-stream": "^1.2",
                 "php": ">=7.0",
-                "psr/http-message": "^1.0"
+                "psr/http-message": "^1.0|^2.0"
             },
             "require-dev": {
                 "phpunit/phpunit": ">=6.0",
@@ -54,9 +54,9 @@
             ],
             "support": {
                 "issues": "https://github.com/azandrew-sidoine/drewlabs-psr7/issues",
-                "source": "https://github.com/azandrew-sidoine/drewlabs-psr7/tree/v0.1.4"
+                "source": "https://github.com/azandrew-sidoine/drewlabs-psr7/tree/v0.1.5"
             },
-            "time": "2023-09-26T17:42:17+00:00"
+            "time": "2023-09-27T16:33:43+00:00"
         },
         {
             "name": "drewlabs/psr7-stream",
