@@ -22,6 +22,7 @@
     "prefer-stable": true,
     "require": {
         "psr/http-client": "^1.0",
-        "drewlabs/psr7": "^0.1.5"
+        "drewlabs/psr7": "^0.1.5|^0.2.1",
+        "drewlabs/curl-client": "^0.3.3"
     }
 }
