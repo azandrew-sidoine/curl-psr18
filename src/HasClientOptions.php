@@ -101,14 +101,16 @@ trait HasClientOptions
             $createsStream = new CreatesMultipartStream($optionsBody);
             $body = new LazyStream($createsStream);
             $headers['Content-Type'] = 'multipart/form-data; boundary='.$createsStream->getBoundary();
-        } elseif (!empty($contentTypeHeader) && (false !== preg_match('/^(?:application|text)\/(?:[a-z]+(?:[\.-][0-9a-z]+){0,}[\+\.]|x-)?json(?:-[a-z]+)?/i', $contentTypeHeader))) {
+        } elseif (!empty($contentTypeHeader) && preg_match('/^(application|text)\/json/i', $contentTypeHeader)) {
             // Handle JSON request
             $body = new LazyStream(new CreatesJSONStream($optionsBody));
             $headers['Content-Type'] = 'application/json';
-        } else {
+        } else if (!empty($contentTypeHeader) && preg_match('/^application\/x-www-form-urlencoded/i', $contentTypeHeader)) {
             // Handle URL encoded request
             $body = new LazyStream(new CreatesURLEncodedStream($optionsBody));
             $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        } else {
+            $headers['Content-Type'] = $contentTypeHeader;
         }
         if (!empty($query = $requestOptions->getQuery())) {
             if (\is_array($query)) {

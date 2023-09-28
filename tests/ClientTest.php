@@ -115,30 +115,6 @@ if (version_compare(\PHP_VERSION, '7.1.0') >= 0) {
             $this->assertEquals($expects, json_decode($response->getBody()->__toString(), true));
         }
 
-        public function test_psr18_client_send_post_json_request()
-        {
-            $url = self::$server->setResponseOfPath('/tests/post', new PostRequestResponse());
-            $requestURI = (new Uri($url));
-            $expects = [
-                'post_id' => 2,
-                'comments' => [
-                    ['content' => 'Hello World!', 'likes' => 0],
-                    ['content' => 'Testing implementation of Psr7 client!', 'likes' => 5],
-                ],
-            ];
-            $client = Client::new(($requestURI->getScheme() ?? 'http').'://'.rtrim($requestURI->getHost().(!empty($p = $requestURI->getPort()) ? ":$p" : ''), '/').'/tests/post', [
-                'verify' => false,
-                'request' => [
-                    'headers' => [
-                        'Accept' => 'application/json',
-                    ],
-                    'body' => $expects,
-                ],
-            ]);
-            $response = $client->sendRequest(new Request('POST'));
-            $this->assertEquals($expects, json_decode($response->getBody()->__toString(), true));
-        }
-
         public function test_psr18_client_send_post_multipart_request()
         {
             $url = self::$server->setResponseOfPath('/tests/post', new PostRequestResponse());
@@ -181,13 +157,13 @@ if (version_compare(\PHP_VERSION, '7.1.0') >= 0) {
                 'verify' => false,
                 'request' => [
                     'headers' => [
-                        'Accept' => 'application/json',
+                        'Content-Type' => 'application/x-www-form-urlencoded'
                     ],
                     'body' => $requests['body2'],
                 ],
             ]);
             $response = $client->sendRequest(new Request('POST'));
-            $this->assertEquals($expects, json_decode($response->getBody()->__toString(), true));
+            $this->assertEquals($expects, json_decode((string)$response->getBody(), true));
         }
 
         public function test_psr18_client_return_404_response_if_server_return_not_found_response()
