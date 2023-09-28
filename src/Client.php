@@ -178,17 +178,9 @@ class Client implements ClientInterface
      */
     public function buildCurlRequestOptions(RequestInterface $request)
     {
-        $options = $this->appendCurlHeaders(
-            $request,
-            $this->appendClientOptions(
-                $request,
-                $this->options,
-                $this->appendCurlBody(
-                    $request,
-                    $this->curlDefaults($request)
-                )
-            )
-        );
+        $output = $this->appendCurlBody($request, $this->curlDefaults($request));
+        $headers =  $this->appendClientOptions($request,$this->options, $output);
+        $options = $this->appendCurlHeaders($request, $headers);
         unset($options['__HEADERS__']);
 
         return $options;
@@ -327,8 +319,7 @@ class Client implements ClientInterface
             foreach (array_keys($options['__HEADERS__']) as $key) {
                 if (!strcasecmp($key, $name)) {
                     unset($options['__HEADERS__'][$key]);
-
-                    return;
+                    break;
                 }
             }
         }
