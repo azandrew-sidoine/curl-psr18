@@ -66,7 +66,7 @@ class RequestOptions
      * ```php
      * $requestOptions = RequestOptions::create([
      *      'headers' => [
-     *          'Content-Type': 'multipart/form-dat',
+     *          'Content-Type': 'multipart/form-data',
      *      ],
      *      'body' => [
      *          // Request body ...

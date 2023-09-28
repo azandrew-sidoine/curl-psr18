@@ -273,7 +273,7 @@ class Client implements ClientInterface
 
         // cURL sometimes adds a content-type by default. Prevent this.
         if (!$request->hasHeader('Content-Type')) {
-            $options[\CURLOPT_HTTPHEADER][] = 'Content-Type:';
+            $options[\CURLOPT_HTTPHEADER][] = 'Content-Type: application/x-www-form-urlencoded';
         }
 
         return $options;
