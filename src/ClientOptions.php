@@ -157,6 +157,19 @@ class ClientOptions
     }
 
     /**
+     * Immutable interface for setting sink option
+     * 
+     * @param StreamInterface $value
+     * 
+     * @return static 
+     */
+    public function withSink(StreamInterface $value)
+    {
+        $self = clone $this;
+        return $self->setSink($value);
+    }
+
+    /**
      * The path where downloaded files are temporary written to.
      *
      * @return static
@@ -353,6 +366,20 @@ class ClientOptions
         return $this->connect_timeout;
     }
 
+
+    /**
+     * Immutable request setter interface
+     * 
+     * @param array|RequestOptions $request 
+     * 
+     * @return static 
+     */
+    public function withRequest($request)
+    {
+        $self = clone $this;
+        return $self->setRequest($request);
+    }
+
     /**
      * Set the request options parameters.
      *
@@ -373,6 +400,21 @@ class ClientOptions
     public function getRequest()
     {
         return \is_array($this->request) ? RequestOptions::create($this->request) : $this->request ?? new RequestOptions();
+    }
+
+
+    /**
+     * Immutable cookies setter interface
+     * 
+     * @param array|CookiesBag $request 
+     * 
+     * @return static 
+     */
+    public function withCookies($request)
+    {
+        $self = clone $this;
+
+        return $self->setCookies($request);
     }
 
     /**

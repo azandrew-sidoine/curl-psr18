@@ -33,7 +33,7 @@ trait HasClientOptions
      *
      * @return ClientOptions
      */
-    public function getOptions()
+    private function getOptions()
     {
         return $this->options;
     }
@@ -43,13 +43,10 @@ trait HasClientOptions
      *
      * @return $this
      */
-    public function setOptions(ClientOptions $options)
+    private function setOptions(ClientOptions $options)
     {
-        $object = clone $this;
-
-        $object->options = $options;
-
-        return $object;
+        $this->options = $options;
+        return $this;
     }
 
     /**
@@ -210,12 +207,9 @@ trait HasClientOptions
             }, array_keys($cookies), array_values($cookies)));
         }
 
-        if (empty($clientOptions->getSink())) {
-            $clientOptions->setSink(Stream::new('', 'w+'));
-        }
         $sink = $clientOptions->getSink();
         if (!\is_string($sink)) {
-            $sink = Stream::new($sink);
+            $sink = Stream::new($sink ?? '');
         } elseif (!is_dir(\dirname($sink))) {
             // Ensure that the directory exists before failing in curl.
             throw new \RuntimeException(sprintf('Directory %s does not exist for sink value of %s', \dirname($sink), $sink));
@@ -224,6 +218,16 @@ trait HasClientOptions
                 return Stream::new($sink, 'w+');
             });
         }
+
+        // Should normally never happen
+        if (null === $sink) {
+            $sink = Stream::new('', 'w+');
+        }
+
+        if ($sink && $clientOptions) {
+            $this->setOptions($clientOptions->withSink($sink));
+        }
+
         $output[\CURLOPT_WRITEFUNCTION] = static function ($ch, $write) use ($sink) {
             return $sink->write($write);
         };

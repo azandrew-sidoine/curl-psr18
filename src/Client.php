@@ -149,15 +149,17 @@ class Client implements ClientInterface
 
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
-        $options = $this->getOptions();
-        $request = $this->overrideRequest($request, $options);
-        $options = $this->buildCurlRequestOptions($request, $options);
-        $this->client->setOptions($options);
+        // Clone the client instance to make it reusable thought process calls
+        $self = clone $this;
+        $options = $self->getOptions();
+        $request = $self->overrideRequest($request, $options);
+        $options = $self->buildCurlRequestOptions($request, $options);
+        $self->client->setOptions($options);
         // Call the curl execute to send the actual request
-        $this->client->exec();
-        if (($errorno = $this->client->getError()) !== 0) {
+        $self->client->exec();
+        if (($errorno = $self->client->getError()) !== 0) {
             // Throw Error if client return error code different from 0
-            [$exceptionMessage, $errorCode] = [$this->client->getErrorMessage(), CurlError::toHTTPStatusCode($errorno)];
+            [$exceptionMessage, $errorCode] = [$self->client->getErrorMessage(), CurlError::toHTTPStatusCode($errorno)];
             if (
                 \in_array($errorno, [
                     CurlError::CURLE_COULDNT_CONNECT,
@@ -169,15 +171,15 @@ class Client implements ClientInterface
             }
             throw new RequestException($request, $exceptionMessage, $errorCode);
         }
-        $statusCode = $this->client->getStatusCode();
+        $statusCode = $self->client->getStatusCode();
 
         return new Response(
             ($statusCode >= 100) && ($statusCode <= 511) ? $statusCode : CurlError::toHTTPStatusCode($errorno),
-            $this->client->getResponseHeaders(),
+            $self->client->getResponseHeaders(),
             // Because we do not use \CURLOPT_RETURNTRANSFERT option we must manually get the response body
-            $this->options->getSink(),
-            $this->client->getProtocolVersion(),
-            $this->client->hasErrorr() ? $this->client->getErrorMessage() : null
+            $self->options->getSink(),
+            $self->client->getProtocolVersion(),
+            $self->client->hasErrorr() ? $self->client->getErrorMessage() : null
         );
     }
 
