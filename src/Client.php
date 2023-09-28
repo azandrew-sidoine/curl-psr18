@@ -42,7 +42,7 @@ class Client implements ClientInterface
 
     public function __clone()
     {
-        $this->options = clone $this->options;
+        $this->options = clone $this->getOptions();
     }
 
     /**
@@ -50,23 +50,31 @@ class Client implements ClientInterface
      *
      * @throws \InvalidArgumentException
      *
+     * **Note** `multipart` method is an immutable method, as it clones the
+     * client and modify it headers
+     * 
      * @return static
      */
     public function json()
     {
-        return $this->setRequestHeader('Content-Type', 'application/json');
+        $self = clone $this;
+        return $self->setRequestHeader('Content-Type', 'application/json');
     }
 
     /**
      * Insure the request is send with content type multipart/form-data.
      *
      * @throws \InvalidArgumentException
+     * 
+     * **Note** `multipart` method is an immutable method, as it clones the
+     * client and modify it headers
      *
      * @return static
      */
     public function multipart()
     {
-        return $this->setRequestHeader('Content-Type', 'multipart/form-data');
+        $self = clone $this;
+        return $self->setRequestHeader('Content-Type', 'multipart/form-data');
     }
 
     /**
@@ -76,17 +84,24 @@ class Client implements ClientInterface
      */
     public function digestAuth(string $user, string $password)
     {
-        return $this->setRequestAuth($user, $password, 'digest');
+        $self = clone $this;
+        $options = $self->options ?? new ClientOptions();
+        return $self->setRequestAuth($user, $password, $options, 'digest');
     }
 
     /**
      * use Basic request authentication.
      *
-     * @return $this
+     * **Note** `multipart` method is an immutable method, as it clones the
+     * client add the basic authentication headers to request headers
+     * 
+     * @return static
      */
     public function basicAuth(string $user, string $password)
     {
-        return $this->setRequestAuth($user, $password);
+        $self = clone $this;
+        $options = $self->options ?? new ClientOptions();
+        return $self->setRequestAuth($user, $password, $options);
     }
 
     /**
@@ -98,19 +113,13 @@ class Client implements ClientInterface
      *
      * @return static
      */
-    public function setRequestHeader(string $name, $value)
+    private function setRequestHeader(string $name, $value)
     {
-        $options = ($this->options ?? new ClientOptions());
+        $options = ($this->getOptions() ?? new ClientOptions());
         $request = $options->getRequest();
         $headers = $request->getHeaders();
 
-        return $this->setOptions(
-            $options->setRequest(
-                $request->setHeaders(
-                    $this->setHeader($headers, $name, $value)
-                )
-            )
-        );
+        return $this->setOptions($options->setRequest($request->setHeaders($this->setHeader($headers, $name, $value))));
     }
 
     /**
@@ -130,7 +139,7 @@ class Client implements ClientInterface
          */
         $instance = (new \ReflectionClass(__CLASS__))->newInstanceWithoutConstructor();
         $instance->client = new CurlClient(null, []);
-        $instance->options = \is_array($options) ? ClientOptions::create($options) : ($options ?? new ClientOptions());
+        $instance->options = \is_array($options) ? ClientOptions::create($options) : ClientOptions::create([]);
         if ($base_url) {
             $instance->options->setBaseURL($base_url);
         }
@@ -140,8 +149,9 @@ class Client implements ClientInterface
 
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
-        $request = $this->overrideRequest($request, $this->options);
-        $options = $this->buildCurlRequestOptions($request);
+        $options = $this->getOptions();
+        $request = $this->overrideRequest($request, $options);
+        $options = $this->buildCurlRequestOptions($request, $options);
         $this->client->setOptions($options);
         // Call the curl execute to send the actual request
         $this->client->exec();
@@ -176,10 +186,10 @@ class Client implements ClientInterface
      *
      * @return array
      */
-    public function buildCurlRequestOptions(RequestInterface $request)
+    private function buildCurlRequestOptions(RequestInterface $request, ClientOptions $options)
     {
         $output = $this->appendCurlBody($request, $this->curlDefaults($request));
-        $headers =  $this->appendClientOptions($request,$this->options, $output);
+        $headers =  $this->appendClientOptions($request, $options, $output);
         $options = $this->appendCurlHeaders($request, $headers);
         unset($options['__HEADERS__']);
 
@@ -327,14 +337,10 @@ class Client implements ClientInterface
         return $options;
     }
 
-    private function setRequestAuth(string $user, string $pass, $type = 'basic')
+    private function setRequestAuth(string $user, string $pass, ClientOptions $options, $type = 'basic')
     {
-        $options = ($this->options ?? new ClientOptions());
         $request = $options->getRequest();
-
-        return $this->setOptions(
-            $options->setRequest($request->setAuth($user, $pass, $type))
-        );
+        return $this->setOptions($options->setRequest($request->setAuth($user, $pass, $type)));
     }
 
     private function setHeader(array $headers, string $name, $value)

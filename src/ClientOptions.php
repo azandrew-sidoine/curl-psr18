@@ -23,7 +23,7 @@ class ClientOptions
     private $verify;
 
     /**
-     * @var string
+     * @var StreamInterface
      */
     private $sink;
 

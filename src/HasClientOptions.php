@@ -46,6 +46,7 @@ trait HasClientOptions
     public function setOptions(ClientOptions $options)
     {
         $object = clone $this;
+
         $object->options = $options;
 
         return $object;
