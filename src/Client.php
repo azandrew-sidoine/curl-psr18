@@ -152,7 +152,7 @@ class Client implements ClientInterface
         // Clone the client instance to make it reusable thought process calls
         $self = clone $this;
         $options = $self->getOptions();
-        $request = $self->overrideRequest($request, $options);
+        $request = (new OverrideRequest($options))->__invoke($request);
         $options = $self->buildCurlRequestOptions($request, $options);
         $self->client->setOptions($options);
         // Call the curl execute to send the actual request

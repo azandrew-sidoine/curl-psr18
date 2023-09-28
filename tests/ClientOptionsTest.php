@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 use Drewlabs\Psr18\ClientOptions;
 use Drewlabs\Psr18\CookiesBag;
+use Drewlabs\Psr18\OverrideRequest;
 use Drewlabs\Psr18\RequestOptions;
+use Drewlabs\Psr7\Request;
 use PHPUnit\Framework\TestCase;
 
 class ClientOptionsTest extends TestCase
@@ -33,7 +35,8 @@ class ClientOptionsTest extends TestCase
             'proxy' => ['http://proxy.app-ip.com'],
             'cert' => null,
             'ssl_key' => ['/home/webhost/.ssh/pub.key'],
-            'progress' => new class() {
+            'progress' => new class()
+            {
                 // Declare the function to handle the progress event
                 public function __invoke()
                 {
@@ -70,5 +73,33 @@ class ClientOptionsTest extends TestCase
         $this->assertSame('MySuperSecret', $options->getCookies()->get('clientsecret'));
         $this->assertFalse($options->getForceResolveIp());
         $this->assertFalse($options->getVerify());
+    }
+
+
+
+    public function test_client_override_request()
+    {
+        $options = ClientOptions::create([
+            'base_url' => 'http://127.0.0.1:3000',
+            'request' => [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept-Encoding' => 'gzip,deflate',
+                ],
+                'timeout' => 10,
+                'auth' => ['MyUser', 'MyPassword', 'digest'],
+                'query' => [
+                    'post_id' => 2, 'comments_count' => 1,
+                ],
+            ],
+        ]);
+
+        $request = (new OverrideRequest($options))(new Request('GET', 'http://127.0.0.1:80'));
+        $uri = $request->getUri();
+        $expects = ($uri->getScheme() ?? 'http') . '://' . rtrim($uri->getHost() . (!empty($p = $uri->getPort()) ? ":$p" : ''), '/');
+        $this->assertEquals('http://127.0.0.1:3000', $expects);
+        $this->assertEquals(['application/json'], $request->getHeader('content-type'));
+        $this->assertEquals(['gzip,deflate'], $request->getHeader('Accept-Encoding'));
+        $this->assertEquals('post_id=2&comments_count=1', $request->getUri()->getQuery());
     }
 }

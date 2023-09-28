@@ -21,6 +21,8 @@ use Drewlabs\Psr7\Uri;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Drewlabs\Psr18\Client;
+use Drewlabs\Psr18\ClientOptions;
+use Drewlabs\Psr18\OverrideRequest;
 
 if (version_compare(\PHP_VERSION, '7.1.0') >= 0) {
     class ClientTest extends TestCase
@@ -55,32 +57,6 @@ if (version_compare(\PHP_VERSION, '7.1.0') >= 0) {
         {
             $client = Client::new();
             $this->assertInstanceOf(ClientInterface::class, $client);
-        }
-
-        public function test_ps18_client_override_request()
-        {
-            $client = Client::new(null, [
-                'base_url' => 'http://127.0.0.1:3000',
-                'request' => [
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept-Encoding' => 'gzip,deflate',
-                    ],
-                    'timeout' => 10,
-                    'auth' => ['MyUser', 'MyPassword', 'digest'],
-                    'query' => [
-                        'post_id' => 2, 'comments_count' => 1,
-                    ],
-                ],
-            ]);
-
-            $request = $client->overrideRequest(new Request('GET', 'http://127.0.0.1:80'));
-            $uri = $request->getUri();
-            $expects = ($uri->getScheme() ?? 'http').'://'.rtrim($uri->getHost().(!empty($p = $uri->getPort()) ? ":$p" : ''), '/');
-            $this->assertEquals('http://127.0.0.1:3000', $expects);
-            $this->assertEquals(['application/json'], $request->getHeader('content-type'));
-            $this->assertEquals(['gzip,deflate'], $request->getHeader('Accept-Encoding'));
-            $this->assertEquals('post_id=2&comments_count=1', $request->getUri()->getQuery());
         }
 
         public function test_psr18_client_get_request()
