@@ -36,9 +36,7 @@ class Client implements ClientInterface
     /**
      * Makes sure an instance of Psr18Client is not created using `new Psr18Client()`.
      */
-    private function __construct()
-    {
-    }
+    private function __construct() {}
 
     public function __clone()
     {
@@ -347,18 +345,7 @@ class Client implements ClientInterface
 
     private function setHeader(array $headers, string $name, $value)
     {
-        $normalized = strtolower($name);
-        if (empty($headers)) {
-            $headers[$normalized] = $value;
-
-            return $headers;
-        }
-        foreach ($headers as $key => $_) {
-            if (strtolower($key) === $normalized) {
-                $headers[$normalized] = $headers;
-            }
-        }
-
+        $headers[strtolower($name)] = $value;
         return $headers;
     }
 }
