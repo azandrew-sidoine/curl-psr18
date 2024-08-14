@@ -4,29 +4,29 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d6e1b9a3960aa8bd99bcfdd94777911",
+    "content-hash": "eb5336118724a7a8a04fb66ff102a8f2",
     "packages": [
         {
             "name": "drewlabs/curl-client",
-            "version": "v0.3.3",
+            "version": "v0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azandrew-sidoine/drewlabs-curl-client.git",
-                "reference": "953c484d889809577011cdee92f017315bf5c1d4"
+                "reference": "6bdf5bc3557931dc6d91ef4423e7f4cef745e605"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azandrew-sidoine/drewlabs-curl-client/zipball/953c484d889809577011cdee92f017315bf5c1d4",
-                "reference": "953c484d889809577011cdee92f017315bf5c1d4",
+                "url": "https://api.github.com/repos/azandrew-sidoine/drewlabs-curl-client/zipball/6bdf5bc3557931dc6d91ef4423e7f4cef745e605",
+                "reference": "6bdf5bc3557931dc6d91ef4423e7f4cef745e605",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
-                "php": ">=7.0"
+                "php": ">=7.2"
             },
             "require-dev": {
                 "donatj/mock-webserver": "^2.5",
-                "phpunit/phpunit": "^6.0"
+                "phpunit/phpunit": ">=8.0"
             },
             "type": "library",
             "autoload": {
@@ -51,9 +51,9 @@
             ],
             "support": {
                 "issues": "https://github.com/azandrew-sidoine/drewlabs-curl-client/issues",
-                "source": "https://github.com/azandrew-sidoine/drewlabs-curl-client/tree/v0.3.3"
+                "source": "https://github.com/azandrew-sidoine/drewlabs-curl-client/tree/v0.4.0"
             },
-            "time": "2023-06-14T15:53:33+00:00"
+            "time": "2024-05-23T18:09:59+00:00"
         },
         {
             "name": "drewlabs/psr7",
@@ -2049,5 +2049,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

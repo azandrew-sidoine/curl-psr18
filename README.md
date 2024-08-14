@@ -149,8 +149,14 @@ Alternatively, to send a `multipart/form-data` request, developpers call the `Cl
 use Drewlabs\Psr18\Client;
 
 // Creates an instance of the cURL client
-$client = new Client(/* Parameters */);
+$client = new Client(
+        'verify' => false,
+        'request' => [
+            'headers' => ['Accept' => 'application/json'],
+            'body' => [ /*...*/ ],
+        ],
+);
 
 // Sends a request with application/json as Content-Type
-$client->json()->sendRequest(new Request());
+$client->multipart()->sendRequest(new Request());
 ```

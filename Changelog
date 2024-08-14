@@ -1,0 +1,6 @@
+# Changelog
+
+
+## [0.4.0] [2024-08-14]
+
+- Added support for `drewlabs/curl-client` version `>=0.4.0`
