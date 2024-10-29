@@ -9,6 +9,7 @@ use Drewlabs\Psr7\CreatesURLEncodedStream;
 use Drewlabs\Psr7\Uri;
 use Drewlabs\Psr7Stream\LazyStream;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
 
 class OverrideRequest
 {
@@ -58,23 +59,16 @@ class OverrideRequest
                 $contentTypeHeader = (string) $value;
             }
         }
-        $optionsBody = $requestOptions->getBody() ?? [];
-        if (!empty($contentTypeHeader) && preg_match('/^multipart\/form-data/', $contentTypeHeader) && !empty($optionsBody)) {
-            // Handle request of multipart http request
-            $createsStream = new CreatesMultipartStream($optionsBody);
-            $body = new LazyStream($createsStream);
-            $headers['Content-Type'] = 'multipart/form-data; boundary=' . $createsStream->getBoundary();
-        } elseif (!empty($contentTypeHeader) && preg_match('/^(application|text)\/json/i', $contentTypeHeader)) {
-            // Handle JSON request
-            $body = new LazyStream(new CreatesJSONStream($optionsBody));
-            $headers['Content-Type'] = 'application/json';
-        } else if (!empty($contentTypeHeader) && preg_match('/^application\/x-www-form-urlencoded/i', $contentTypeHeader)) {
-            // Handle URL encoded request
-            $body = new LazyStream(new CreatesURLEncodedStream($optionsBody));
-            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
-        } else {
-            $headers['Content-Type'] = $contentTypeHeader;
+
+        // Set the content type header if provided
+        $headers['Content-Type'] = $contentTypeHeader;
+
+        // Override request content type and body of request options has body configuration
+        if (!empty($optionsBody = $requestOptions->getBody() ?? [])) {
+            $this->writeRequestBodyContentTypeHeader($optionsBody, $contentTypeHeader, $body, $headers);
         }
+
+
         if (!empty($query = $requestOptions->getQuery())) {
             if (\is_array($query)) {
                 $query = http_build_query($query, '', '&', \PHP_QUERY_RFC3986);
@@ -105,5 +99,38 @@ class OverrideRequest
         }
 
         return $request;
+    }
+
+    /**
+     * Rewrite request body and content type header for the options body configuration
+     * @param mixed $override 
+     * @param string|null $contentType
+     * @param StreamInterface &$body 
+     * @param array &$headers 
+     * @return void 
+     */
+    private function writeRequestBodyContentTypeHeader($override, string $contentType, StreamInterface &$body, array &$headers)
+    {
+        if (!empty($contentType) && preg_match('/^multipart\/form-data/', $contentType)) {
+            // Handle request of multipart http request
+            $createsStream = new CreatesMultipartStream($override);
+            $body = new LazyStream($createsStream);
+            $headers['Content-Type'] = 'multipart/form-data; boundary=' . $createsStream->getBoundary();
+            return;
+        }
+
+        if (!empty($contentType) && preg_match('/^(application|text)\/json/i', $contentType)) {
+            // Handle JSON request
+            $body = new LazyStream(new CreatesJSONStream($override));
+            $headers['Content-Type'] = 'application/json';
+            return;
+        }
+
+        if (!empty($contentType) && preg_match('/^application\/x-www-form-urlencoded/i', $contentType)) {
+            // Handle URL encoded request
+            $body = new LazyStream(new CreatesURLEncodedStream($override));
+            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            return;
+        }
     }
 }
